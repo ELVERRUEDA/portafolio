@@ -1,0 +1,258 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Elver Rueda · Desarrollador</title>
+  <meta name="description" content="Portafolio de Elver Rueda: desarrollador autodidacta en Colombia que construye sistemas que unen hardware (ESP32), APIs y automatización.">
+  <meta property="og:title" content="Elver Rueda · Desarrollador">
+  <meta property="og:description" content="Sistemas reales que combinan software, automatización y hardware.">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="#inicio"><span class="brand-dot"></span>elver.rueda</a>
+    <nav class="nav" aria-label="Principal">
+      <a href="#nova">Nova</a>
+      <a href="#proyectos">Proyectos</a>
+      <a href="#stack">Stack</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Cambiar tema">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9Z"/></svg>
+    </button>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="inicio">
+      <div class="hero-text">
+        <p class="eyebrow">Desarrollador autodidacta · Colombia</p>
+        <h1>Construyo sistemas donde el <span class="hl">software</span> toca el <span class="hl">mundo físico</span>.</h1>
+        <p class="lead">
+          Hola, soy <strong>Elver Rueda</strong>. Programo firmware para ESP32, APIs con FastAPI,
+          interfaces web y flujos de automatización, y los conecto entre sí para que hagan algo real:
+          abrir una cortina a la hora programada, medir un ambiente o, ahora, darle una cara y una voz a una IA.
+        </p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#proyectos">Ver proyectos</a>
+          <a class="btn" href="https://github.com/ELVERRUEDA" target="_blank" rel="noopener">GitHub ↗</a>
+        </div>
+      </div>
+
+      <figure class="device" aria-label="Demo interactiva del rostro de Nova">
+        <div class="device-bezel">
+          <canvas id="face" width="480" height="480"></canvas>
+          <p class="device-text" id="deviceText" aria-live="polite"></p>
+        </div>
+        <figcaption>
+          <span class="mono">nova@esp32-s3</span> — simulación del rostro. Toca una emoción:
+          <div class="chips" id="emotionChips"></div>
+        </figcaption>
+      </figure>
+    </section>
+
+    <!-- ============ NOVA ============ -->
+    <section class="section" id="nova">
+      <div class="section-head">
+        <p class="eyebrow">Proyecto actual · en desarrollo</p>
+        <h2>Nova — un bot con rostro animado que piensa con Claude</h2>
+        <div class="cta">
+          <a class="btn" href="https://github.com/ELVERRUEDA/nova-bot" target="_blank" rel="noopener">Ver el código en GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="nova-grid">
+        <div class="prose">
+          <p>
+            Nova vive en una <strong>Guition ESP32‑4848S040</strong>: un panel táctil de 4" y 480×480 px con un
+            ESP32‑S3 (16 MB de flash, 8 MB de PSRAM). Tiene dos ojos grandes que parpadean y miran alrededor,
+            y una boca que se mueve mientras habla. Sus respuestas las genera la <strong>API de Claude</strong>.
+          </p>
+          <p>
+            Cada respuesta llega como <strong>salida estructurada</strong>, así que el propio modelo decide qué
+            expresión poner. El firmware dibuja la cara en un lienzo en PSRAM a unos 30 fps y hace la petición
+            HTTPS en una tarea de FreeRTOS en el otro núcleo, para que la animación de «pensando» nunca se congele.
+          </p>
+          <pre class="code"><code>{
+  <span class="k">"emocion"</span>: <span class="s">"feliz"</span>,
+  <span class="k">"respuesta"</span>: <span class="s">"¡Claro! Te explico cómo funciona…"</span>
+}</code></pre>
+        </div>
+
+        <ul class="facts">
+          <li><span class="fact-n">7</span><span>emociones que Claude elige en cada respuesta</span></li>
+          <li><span class="fact-n">~30<small>fps</small></span><span>animación en un lienzo en PSRAM</span></li>
+          <li><span class="fact-n">2</span><span>núcleos: uno anima, el otro habla con la API</span></li>
+          <li><span class="fact-n">8</span><span>turnos de memoria de conversación</span></li>
+        </ul>
+      </div>
+
+      <div class="flow" aria-label="Flujo de datos de Nova">
+        <div class="node"><span class="node-t">Entrada</span><span>Monitor Serial · táctil GT911</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><span class="node-t">ESP32‑S3 · núcleo 0</span><span>Tarea FreeRTOS + cola de preguntas</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="node accent"><span class="node-t">Claude API</span><span>POST /v1/messages por HTTPS (TLS)</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><span class="node-t">JSON</span><span>{ emocion, respuesta }</span></div>
+        <span class="arrow" aria-hidden="true">→</span>
+        <div class="node"><span class="node-t">ESP32‑S3 · núcleo 1</span><span>Rostro + texto letra a letra en ST7701S</span></div>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h3>Retos resueltos</h3>
+          <ul class="list">
+            <li>Pantalla RGB ST7701S con el pinout de la placa y buffer en PSRAM OPI.</li>
+            <li>Driver mínimo propio para el táctil GT911.</li>
+            <li>Fuentes con tildes y ñ (U8g2) y texto paginado bajo el rostro.</li>
+            <li>Certificados raíz embebidos para hablar con la API por TLS.</li>
+            <li>Máquina de estados: inactivo, escuchando, pensando, hablando y dormido.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Lo que viene: voz</h3>
+          <ul class="list">
+            <li>Micrófono I2S (INMP441) en los pines libres del conector.</li>
+            <li>Voz a texto (por ejemplo, Whisper) → Claude.</li>
+            <li>Texto a voz con amplificador I2S (MAX98357A) y altavoz.</li>
+            <li>La boca ya se anima mientras «habla»: solo falta el sonido.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="tags">
+        <span>C++</span><span>ESP32‑S3</span><span>PlatformIO</span><span>FreeRTOS</span><span>Arduino_GFX</span><span>ArduinoJson</span><span>Claude API</span>
+      </div>
+      <a class="more" href="https://github.com/ELVERRUEDA/nova-bot" target="_blank" rel="noopener">github.com/ELVERRUEDA/nova-bot ↗</a>
+    </section>
+
+    <!-- ============ PROYECTOS ============ -->
+    <section class="section" id="proyectos">
+      <div class="section-head">
+        <p class="eyebrow">Proyectos</p>
+        <h2>De la placa a la nube, y de vuelta</h2>
+      </div>
+
+      <article class="system card">
+        <div class="system-head">
+          <div>
+            <p class="eyebrow">Sistema completo · 3 repositorios</p>
+            <h3>Cortina automática + programador de tareas IoT</h3>
+          </div>
+        </div>
+        <p>
+          Programas una hora desde la web, la tarea se guarda en Firebase Firestore y una ESP32 la lee
+          en tiempo real para mover un motor DC de 12 V (vía L298N) y abrir la cortina sola.
+          Con n8n se envía un aviso por Telegram cuando la tarea se completa.
+        </p>
+        <div class="flow flow-sm" aria-label="Arquitectura del sistema de cortina">
+          <div class="node"><span class="node-t">Frontend</span><span>HTML · CSS · JS</span></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node"><span class="node-t">API REST</span><span>FastAPI + auth</span></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node accent"><span class="node-t">Firestore</span><span>tareas programadas</span></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node"><span class="node-t">ESP32</span><span>motor DC · L298N</span></div>
+          <span class="arrow" aria-hidden="true">→</span>
+          <div class="node"><span class="node-t">n8n</span><span>aviso por Telegram</span></div>
+        </div>
+        <div class="repo-row">
+          <a class="repo" href="https://github.com/ELVERRUEDA/iot-task-scheduler" target="_blank" rel="noopener">
+            <span class="repo-name">iot-task-scheduler</span><span class="lang"><i style="--c:#f34b7d"></i>C++</span>
+          </a>
+          <a class="repo" href="https://github.com/ELVERRUEDA/task-scheduler-api" target="_blank" rel="noopener">
+            <span class="repo-name">task-scheduler-api</span><span class="lang"><i style="--c:#3572a5"></i>Python</span>
+          </a>
+          <a class="repo" href="https://github.com/ELVERRUEDA/task-scheduler-frontend" target="_blank" rel="noopener">
+            <span class="repo-name">task-scheduler-frontend</span><span class="lang"><i style="--c:#f1e05a"></i>JavaScript</span>
+          </a>
+        </div>
+      </article>
+
+      <div class="grid">
+        <article class="card project">
+          <p class="eyebrow">IoT · MQTT</p>
+          <h3>ESP32 IoT — monitoreo ambiental</h3>
+          <p>
+            La ESP32 mide temperatura y humedad con un DHT11, las muestra en una LCD 16×2 y controla un relé.
+            Envía la telemetría y recibe comandos por MQTT.
+          </p>
+          <div class="tags"><span>C++</span><span>ESP32</span><span>MQTT</span><span>DHT11</span></div>
+          <a class="more" href="https://github.com/ELVERRUEDA/ESP32-IoT" target="_blank" rel="noopener">Ver repositorio ↗</a>
+        </article>
+
+        <article class="card project">
+          <p class="eyebrow">Ingesta de datos</p>
+          <h3>ESP32 → MQTT → SQL Server</h3>
+          <p>
+            Una aplicación Java se suscribe a los tópicos MQTT donde publica la ESP32, procesa cada mensaje
+            y lo guarda en una base de datos SQL Server.
+          </p>
+          <div class="tags"><span>Java</span><span>MQTT</span><span>SQL Server</span><span>Eclipse</span></div>
+          <a class="more" href="https://github.com/ELVERRUEDA/ECLIPSE_SQLSERVER" target="_blank" rel="noopener">Ver repositorio ↗</a>
+        </article>
+
+        <article class="card project">
+          <p class="eyebrow">Backend</p>
+          <h3>API REST con FastAPI y Firebase</h3>
+          <p>
+            Autenticación de usuarios, CRUD de tareas y conexión a Firestore con Firebase Admin SDK.
+            Es el cerebro del programador de tareas.
+          </p>
+          <div class="tags"><span>Python</span><span>FastAPI</span><span>Firebase</span></div>
+          <a class="more" href="https://github.com/ELVERRUEDA/task-scheduler-api" target="_blank" rel="noopener">Ver repositorio ↗</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============ STACK ============ -->
+    <section class="section" id="stack">
+      <div class="section-head">
+        <p class="eyebrow">Stack</p>
+        <h2>Con qué trabajo</h2>
+      </div>
+      <div class="stack">
+        <div class="card"><h3>Hardware e IoT</h3><div class="tags"><span>ESP32 / ESP32‑S3</span><span>C++</span><span>PlatformIO</span><span>FreeRTOS</span><span>MQTT</span><span>I2S</span></div></div>
+        <div class="card"><h3>Backend</h3><div class="tags"><span>Python</span><span>FastAPI</span><span>Firebase</span><span>Java</span><span>SQL Server</span></div></div>
+        <div class="card"><h3>Frontend</h3><div class="tags"><span>JavaScript</span><span>React</span><span>HTML</span><span>CSS</span></div></div>
+        <div class="card"><h3>IA y automatización</h3><div class="tags"><span>Claude API</span><span>n8n</span><span>Docker</span><span>Telegram bots</span></div></div>
+      </div>
+
+      <div class="card learning">
+        <h3>Aprendiendo ahora</h3>
+        <ul class="list inline">
+          <li>Voz en dispositivos: I2S, voz a texto y texto a voz</li>
+          <li>Flujos avanzados con n8n + LLMs</li>
+          <li>PostgreSQL</li>
+          <li>TypeScript</li>
+          <li>CI/CD con GitHub Actions</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ CONTACTO ============ -->
+    <section class="section contact" id="contacto">
+      <h2>¿Tienes un proyecto que mezcle hardware y software?</h2>
+      <p class="lead">Me interesan los retos donde hay que conectar una placa, una API y una persona. Escríbeme.</p>
+      <div class="cta">
+        <span class="email" id="email">elver.s.rueda.b@gmail.com</span>
+        <button class="btn btn-primary" id="copyEmail" type="button">Copiar correo</button>
+        <a class="btn" href="https://github.com/ELVERRUEDA" target="_blank" rel="noopener">github.com/ELVERRUEDA ↗</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>© <span id="year"></span> Elver Rueda</span>
+    <span class="mono">hecho a mano · HTML, CSS y JS</span>
+  </footer>
+
+  <script src="main.js"></script>
+</body>
+</html>
