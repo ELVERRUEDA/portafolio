@@ -19,10 +19,10 @@ python -m http.server 8000
 
 ## Publicarlo en GitHub Pages
 
-1. Crea un repo llamado `ELVERRUEDA.github.io` (o cualquier nombre).
+1. Crea un repo llamado `Portafolio.github.io` (o cualquier nombre).
 2. Sube esta carpeta a la rama `main`.
 3. En **Settings → Pages**, elige *Deploy from a branch* → `main` / `root`.
-4. Quedará en `https://elverrueda.github.io/` (o `https://elverrueda.github.io/<repo>/`).
+4. Quedará en `https://Portafolio.github.io/` (o `https://Portafolio.github.io/<repo>/`).
 
 ## Editar contenido
 
